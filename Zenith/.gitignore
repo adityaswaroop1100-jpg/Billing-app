@@ -1,0 +1,33 @@
+# Node.js
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+venv/
+core/venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.tox/
+.poetry/
+
+# Local databases and caches
+*.db
+*.db-journal
+*.sqlite
+.env
+core/.env
+
+# Temporary captures & OS generated files
+app/temp_captures/
+.DS_Store
+Thumbs.db
+
+# Electron build outputs
+out/
+release/

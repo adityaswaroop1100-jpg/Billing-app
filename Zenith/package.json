@@ -1,0 +1,17 @@
+{
+  "name": "zenith",
+  "version": "1.0.0",
+  "description": "Zenith - AI Operating System Assistant",
+  "main": "app/main.js",
+  "scripts": {
+    "setup": "npm run setup:app && npm run setup:backend",
+    "setup:app": "npm install --prefix app",
+    "setup:backend": "python3 -m venv core/venv && core/venv/bin/pip install -r core/requirements.txt",
+    "start:backend": "core/venv/bin/uvicorn main:app --app-dir core --reload --port 5001",
+    "start:app": "npm run dev --prefix app",
+    "start": "concurrently \"npm run start:app\" \"npx electron .\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
