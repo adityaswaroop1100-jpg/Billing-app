@@ -21,8 +21,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: _upgradeDB,
     );
   }
 
@@ -84,6 +85,42 @@ class DatabaseHelper {
 
     for (var item in defaultItems) {
       await db.insert('items', item.toMap());
+    }
+  }
+
+  // Migrate old databases that are missing columns / tables
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Add subtotal column if missing
+      try {
+        await db.execute(
+            'ALTER TABLE bills ADD COLUMN subtotal REAL NOT NULL DEFAULT 0.0');
+      } catch (_) {}
+
+      // Add discount column if missing
+      try {
+        await db.execute(
+            'ALTER TABLE bills ADD COLUMN discount REAL NOT NULL DEFAULT 0.0');
+      } catch (_) {}
+
+      // Create settings table if somehow missing
+      try {
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS settings(
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL
+          )
+        ''');
+        await db.insert(
+            'settings', {'key': 'upi_id', 'value': 'kaverisweets@upi'},
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+        await db.insert(
+            'settings', {'key': 'shop_name', 'value': 'Kaveri Sweets'},
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+        await db.insert('settings',
+            {'key': 'shop_address', 'value': 'SR Dalmai Road, Madhupur, Deoghar'},
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+      } catch (_) {}
     }
   }
 
